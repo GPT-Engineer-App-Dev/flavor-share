@@ -1,7 +1,41 @@
-import { Box, Button, Container, Flex, Heading, HStack, IconButton, Image, Input, Stack, Text, Textarea, VStack } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Heading, HStack, IconButton, Image, Input, Stack, Text, Textarea, VStack, useToast } from "@chakra-ui/react";
+import { useState } from "react";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 
 const Index = () => {
+  const [title, setTitle] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [instructions, setInstructions] = useState("");
+  const [image, setImage] = useState(null);
+  const toast = useToast();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title || !ingredients || !instructions || !image) {
+      toast({
+        title: "Error",
+        description: "All fields are required.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+    // Handle form submission logic here (e.g., send data to an API)
+    toast({
+      title: "Success",
+      description: "Recipe submitted successfully!",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+    // Clear form fields after submission
+    setTitle("");
+    setIngredients("");
+    setInstructions("");
+    setImage(null);
+  };
+
   return (
     <Container maxW="container.xl" p={0}>
       {/* Navigation Bar */}
@@ -42,11 +76,12 @@ const Index = () => {
       {/* Submit a Recipe Section */}
       <Box as="section" bg="gray.100" p={10}>
         <Heading mb={6} textAlign="center">Submit a Recipe</Heading>
-        <VStack spacing={4} maxW="md" mx="auto">
-          <Input placeholder="Recipe Title" />
-          <Input placeholder="Image URL" />
-          <Textarea placeholder="Recipe Description" />
-          <Button colorScheme="teal" size="md">Submit</Button>
+        <VStack as="form" spacing={4} maxW="md" mx="auto" onSubmit={handleSubmit}>
+          <Input placeholder="Recipe Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Textarea placeholder="Ingredients" value={ingredients} onChange={(e) => setIngredients(e.target.value)} />
+          <Textarea placeholder="Instructions" value={instructions} onChange={(e) => setInstructions(e.target.value)} />
+          <Input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
+          <Button colorScheme="teal" size="md" type="submit">Submit</Button>
         </VStack>
       </Box>
 
