@@ -1,12 +1,55 @@
-import { Box, Button, Container, Flex, Heading, HStack, IconButton, Image, Input, Stack, Text, Textarea, VStack, useToast } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Heading, HStack, IconButton, Image, Input, Stack, Text, Textarea, VStack, useToast, useRadioGroup, useRadio } from "@chakra-ui/react";
+import { FaFacebook, FaTwitter, FaInstagram, FaStar } from "react-icons/fa";
 import { useState } from "react";
-import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
+
+const Rating = ({ rating, setRating }) => {
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "rating",
+    value: rating,
+    onChange: setRating,
+  });
+
+  const group = getRootProps();
+
+  return (
+    <HStack {...group}>
+      {[1, 2, 3, 4, 5].map((value) => {
+        const radio = getRadioProps({ value });
+        return (
+          <Box as="label" key={value}>
+            <input {...radio} style={{ display: "none" }} />
+            <Box
+              {...radio}
+              cursor="pointer"
+              borderWidth="1px"
+              borderRadius="md"
+              boxShadow="md"
+              _checked={{
+                bg: "teal.600",
+                color: "white",
+                borderColor: "teal.600",
+              }}
+              _focus={{
+                boxShadow: "outline",
+              }}
+              px={3}
+              py={1}
+            >
+              <FaStar />
+            </Box>
+          </Box>
+        );
+      })}
+    </HStack>
+  );
+};
 
 const Index = () => {
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
   const [image, setImage] = useState(null);
+  const [ratings, setRatings] = useState({});
   const toast = useToast();
 
   const handleSubmit = (e) => {
@@ -66,6 +109,7 @@ const Index = () => {
             <Box p={6}>
               <Heading size="md" mb={2}>Recipe Title</Heading>
               <Text mb={4}>Short description of the recipe.</Text>
+              <Rating rating={ratings["recipe-id"] || 0} setRating={(value) => setRatings({ ...ratings, ["recipe-id"]: value })} />
               <Button colorScheme="teal" size="sm">View Recipe</Button>
             </Box>
           </Box>
